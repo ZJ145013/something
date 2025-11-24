@@ -99,163 +99,162 @@ FilterAll: &FilterAll '^(?=.*(.))(?!.*((?i)群|邀请|返利|循环|官网|客�
 # - REJECT:    拒绝连接（一般用于广告流量）
 # =========================
 proxy-groups:
-  - name: 香港自动策略
-    <<: *UrlTest
-    filter: *FilterHK
-  - name: 台湾自动策略
-    <<: *UrlTest
-    filter: *FilterTW
-  - name: 日本自动策略
-    <<: *UrlTest
-    filter: *FilterJP
-  - name: 韩国自动策略
-    <<: *UrlTest
-    filter: *FilterKR
-  - name: 新国自动策略
-    <<: *UrlTest
-    filter: *FilterSG
-  - name: 美国自动策略
-    <<: *UrlTest
-    filter: *FilterUS
-  - name: 英国自动策略
-    <<: *UrlTest
-    filter: *FilterUK
-  - name: 法国自动策略
-    <<: *UrlTest
-    filter: *FilterFR
-  - name: 德国自动策略
-    <<: *UrlTest
-    filter: *FilterDE
-  # 专门用于选择最佳中转节点的策略组
-  # - name: 🚀 最佳跳板
-  #   type: url-test
-  #   # 这里我们使用一个更宽松、更适合稳定节点的 url-test 锚点
-  #   # 也可以直接引用您已有的 *UrlTest，但建议分开
-  #   url: 'http://www.google.com/blank.html'
-  #   interval: 300 # 每5分钟测一次即可
-  #   tolerance: 20
-  #   lazy: true
-  #   use: [组合订阅]
-  #   filter: *FilterTransit
-  #   hidden: true 
-  # - name: ⛓️ 美国链式代理
-  #   type: select # 使用手动选择，方便对比效果
-  #   proxies:
-  #     - DIRECT   # 添加一个选项可以方便地切回直连模式
-  #     - 'US-hysteria2'
-  #     - 'US-vless-reality'
-
+  # --- 核心选择策略 ---
   - name: 🚀 节点选择
     type: select
     proxies:
-    - DIRECT
-    - ⚡ 自动选择
-    - 美国自动策略
-    # - ⛓️ 美国链式代理
-    - 日本自动策略
-    - 新国自动策略
-    - 香港自动策略
-    - 台湾自动策略
-    - 韩国自动策略
-    - 英国自动策略
-    - 法国自动策略
-    - 德国自动策略
+      - ⚡ 自动选择
+      # - ⛓️ 美国链式代理 # 如需使用链式代理，请取消本行注释
+      - 🇭🇰 香港自动策略
+      - 🇹🇼 台湾自动策略
+      - 🇯🇵 日本自动策略
+      - 🇰🇷 韩国自动策略
+      - 🇸🇬 新国自动策略
+      - 🇺🇸 美国自动策略
+      - 🇬🇧 英国自动策略
+      - 🇫🇷 法国自动策略
+      - 🇩🇪 德国自动策略
+      - 🔒 国内服务
+
   - name: ⚡ 自动选择
-    type: url-test
-    include-all-providers: true
-    url: https://www.gstatic.com/generate_204
-    interval: 300
-    lazy: false
+    <<: *UrlTest
+    use: [组合订阅]
+    # 优化：同样使用FilterAll避免无效节点参与测速
+    filter: *FilterAll
+
+  # --- 链式代理专用策略组 (默认不启用) ---
+  # 如需启用，请取消以下注释，并同时取消 proxies 部分和“🚀 节点选择”中对应条目的注释
+  # - name: 🚀 最佳跳板
+  #   <<: *UrlTest
+  #   use: [组合订阅]
+  #   filter: *FilterTransit
+  # - name: ⛓️ 美国链式代理
+  #   type: select
+  #   proxies:
+  #     - DIRECT
+  #     - 'US-hysteria2'
+  #     - 'US-vless-reality'
+
+  # --- 功能性自动策略组 ---
+  # 修复：为所有区域策略组添加 `use: [组合订阅]`
+  - name: 🇭🇰 香港自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterHK
+  - name: 🇹🇼 台湾自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterTW
+  - name: 🇯🇵 日本自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterJP
+  - name: 🇰🇷 韩国自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterKR
+  - name: 🇸🇬 新国自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterSG
+  - name: 🇺🇸 美国自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterUS
+  - name: 🇬🇧 英国自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterUK
+  - name: 🇫🇷 法国自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterFR
+  - name: 🇩🇪 德国自动策略
+    <<: *UrlTest
+    use: [组合订阅]
+    filter: *FilterDE
+
+  # --- 应用分流策略 ---
   - name: 🛑 广告拦截
     type: select
     proxies:
-    - REJECT
+      - REJECT
   - name: 💬 AI 服务
     type: select
     proxies:
-    - 美国自动策略
-    # - ⛓️ 美国链式代理
-    - 日本自动策略
-    - 新国自动策略
-    - 台湾自动策略
-    - 韩国自动策略
-    - 英国自动策略
-    - 法国自动策略
-    - 德国自动策略
+      - 🇺🇸 美国自动策略
+      - 🇯🇵 日本自动策略
+      - 🇸🇬 新国自动策略
+      - 🚀 节点选择
   - name: 📹 油管视频
     type: select
     proxies:
-    - 🚀 节点选择
+      - 🚀 节点选择
   - name: 🔍 谷歌服务
     type: select
     proxies:
-    - 美国自动策略
-    - 日本自动策略
-    - 新国自动策略
-    - 香港自动策略
-    - 台湾自动策略
-    - 韩国自动策略
-    - 英国自动策略
-    - 法国自动策略
-    - 德国自动策略
+      - 🇭🇰 香港自动策略
+      - 🇯🇵 日本自动策略
+      - 🇺🇸 美国自动策略
+      - 🚀 节点选择
   - name: 🏠 私有网络
     type: select
     proxies:
-    - DIRECT
-    - 🚀 节点选择
+      - DIRECT
   - name: 🔒 国内服务
     type: select
     proxies:
-    - DIRECT
-    - REJECT
+      - DIRECT
   - name: 📲 电报消息
     type: select
     proxies:
-    - 🚀 节点选择
+      - 🚀 节点选择
   - name: 🐱 Github
     type: select
     proxies:
-    - 🚀 节点选择
+      - 🚀 节点选择
   - name: Ⓜ️ 微软服务
     type: select
     proxies:
-    - DIRECT
+      - DIRECT
+      - 🚀 节点选择
   - name: 🍏 苹果服务
     type: select
     proxies:
-    - DIRECT
-    - 美国自动策略
+      - DIRECT
+      - 🇺🇸 美国自动策略
   - name: 🌐 社交媒体
     type: select
     proxies:
-    - 🚀 节点选择
+      - 🚀 节点选择
   - name: 🎬 流媒体
     type: select
     proxies:
-    - 🚀 节点选择
+      - 🚀 节点选择
   - name: 🎮 游戏平台
     type: select
     proxies:
-    - DIRECT
-    - 🚀 节点选择
+      - 🚀 节点选择
+      - DIRECT
   - name: 📚 教育资源
     type: select
     proxies:
-    - DIRECT
-    - 🚀 节点选择
+      - 🚀 节点选择
+      - DIRECT
   - name: ☁️ 云服务
     type: select
     proxies:
-    - DIRECT
-    - 🚀 节点选择
+      - 🚀 节点选择
+      - DIRECT
   - name: 🌐 非中国
     type: select
     proxies:
-    - 🚀 节点选择
+      - 🚀 节点选择
   - name: 🐟 漏网之鱼
     type: select
     proxies:
-    - 🚀 节点选择
+      - 🚀 节点选择
+      - DIRECT
 
 # =========================
 # 端口监听配置
@@ -623,7 +622,8 @@ rule-providers:
 # 分流规则
 # =========================
 rules: # 注意，分流规则是按自上而下、首次命中即停的原则进行匹配，因此重要的规则应该放前面
- - DOMAIN-SUFFIX,69yun69.com,香港自动策略
+ - DOMAIN-SUFFIX,elysia.h-e.top,🔒 国内服务
+ - DOMAIN-SUFFIX,69yun69.com,🇭🇰 香港自动策略
  - RULE-SET,category-ads-all,🛑 广告拦截
  - RULE-SET,category-ai-chat-!cn,💬 AI 服务
  - RULE-SET,youtube,📹 油管视频
