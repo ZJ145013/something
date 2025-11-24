@@ -1,0 +1,344 @@
+# =========================
+# 代理节点配置
+# =========================
+
+# proxies:
+# =========================
+# - name: <节点的名字>                   只是显示名，随便改。但与下面”代理组配置“里引用的名字必须一字不差
+#  type:                                ===中间的一大坨直接用你的节点粘贴覆盖即可===  
+#  ...                                  ===中间的一大坨直接用你的节点粘贴覆盖即可===
+#  ...                                  ===中间的一大坨直接用你的节点粘贴覆盖即可===
+#  ...                                  ===中间的一大坨直接用你的节点粘贴覆盖即可===
+#  skip-cert-verify: false              ===中间的一大坨直接用你的节点粘贴覆盖即可===
+# - dialer-proxy: <线路节点的名字>       可选，想把这个节点用于链式代理时加上这一行。
+# ========================= 
+
+
+
+# 锚点 - 节点订阅的参数 [每小时更新一次订阅节点，每 6 秒一次健康检查]
+NodeParam: &NodeParam {type: http, interval: 3600, health-check: {enable: true, url: 'http://www.google.com/blank.html', interval: 6}}
+
+proxy-providers:
+  组合订阅:
+    # 类型
+    # type: http
+    # 订阅链接
+    # 自动更新时间设置
+    # interval: 3600
+    # 健康检查
+    # health-check:
+    #   enable: true
+    #   interval: 600
+    #   # lazy: true
+    #   url: http://www.gstatic.com/generate_204
+    # 使用锚点，代表以上所有参数
+    <<: *NodeParam
+    url: "https://sub-store.942645.xyz/sub-store-path/download/collection/sub-store%E7%BB%84%E5%90%88%E8%AE%A2%E9%98%85"
+    path: ./组合订阅.yaml
+
+
+
+# 策略组参数锚点
+# 锚点 - 时延优选参数 [每 6 秒一次惰性健康检查，容差 20ms，时延超过 2 秒判定为失败，失败 3 次则自动触发健康检查]
+UrlTest: &UrlTest {type: url-test, interval: 6, tolerance: 20, lazy: true, url: 'http://www.google.com/blank.html', disable-udp: false, timeout: 2000, max-failed-times: 3, hidden: true, include-all-providers: true}
+# 锚点 - 故障转移参数 [每 6 秒一次惰性健康检查，时延超过 2 秒判定为失败，失败 3 次则自动触发健康检查]
+FallBack: &FallBack {type: fallback, interval: 6, lazy: true, url: 'http://www.google.com/blank.html', disable-udp: false, timeout: 2000, max-failed-times: 3, hidden: true, include-all-providers: true}
+# 锚点 - 负载均衡参数 [每 6 秒一次惰性健康检查，时延超过 2 秒判定为失败，失败 3 次则自动触发健康检查]
+LoadBalance: &LoadBalance {type: load-balance, interval: 6, lazy: true, url: 'http://www.google.com/blank.html', disable-udp: false, strategy: consistent-hashing, timeout: 2000, max-failed-times: 3, hidden: true, include-all-providers: true}
+# 锚点 - 规则参数 [每小时更新一次订阅规则，更新规则时使用直连策略]
+RuleProviders: &RuleProviders {type: http, behavior: classical, interval: 3600, format: yaml, proxy: DIRECT}
+
+# 锚点 - 节点筛选组
+FilterHK: &FilterHK '^(?=.*((?i)🇭🇰|香港|(\b(HK|HKG|Hong)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterTW: &FilterTW '^(?=.*((?i)🇹🇼|台湾|(\b(TW|TWN|Tai|Taiwan)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterJP: &FilterJP '^(?=.*((?i)🇯🇵|日本|川日|东京|大阪|泉日|埼玉|(\b(JP|JPN|Japan)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterKR: &FilterKR '^(?=.*((?i)🇰🇷|韩国|韓|首尔|(\b(KR|KOR|Korea)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterSG: &FilterSG '^(?=.*((?i)🇸🇬|新加坡|狮|(\b(SG|SGP|Singapore)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterUS: &FilterUS '^(?=.*((?i)🇺🇸|美国|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|(\b(US|USA|United States)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterUK: &FilterUK '^(?=.*((?i)🇬🇧|英国|伦敦|(\b(UK|GBR|United Kingdom)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterFR: &FilterFR '^(?=.*((?i)🇫🇷|法国|(\b(FR|FRA|France)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterDE: &FilterDE '^(?=.*((?i)🇩🇪|德国|(\b(DE|DEU|Germany)(\d+)?\b)))(?!.*((?i)回国|校园|游戏|🎮|(\b(GAME)\b))).*$'
+FilterGame: &FilterGame '^(?=.*((?i)游戏|🎮|(\b(GAME)(\d+)?\b)))(?!.*((?i)回国|校园)).*$'
+FilterAll: &FilterAll '^(?=.*(.))(?!.*((?i)群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|超时|收藏|福利|邀请|好友|失联|(\b(USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author|Traffic)(\d+)?\b|(\d{4}-\d{2}-\d{2}|\dG)))).*$'
+
+
+# =========================
+# 代理组配置
+# =========================
+# - select:    手动切换（推荐）
+# - url-test:  自动测速择优（定时探测并选延迟最低者）
+# - DIRECT:    直连，不走代理
+# - REJECT:    拒绝连接（一般用于广告流量）
+# =========================
+proxy-groups: 
+  - {name: 兜底后备策略, type: fallback, proxies: [美国自动策略, 日本自动策略, 新国自动策略, 香港自动策略, 台湾自动策略, 韩国自动策略, 英国自动策略, 法国自动策略, 德国自动策略]}
+  - {name: AI, type: select, proxies: [美国自动策略, 新国自动策略, 日本自动策略, 香港自动策略, 台湾自动策略, 韩国自动策略, 英国自动策略, 法国自动策略, 德国自动策略]}
+  - {name: TikTok, type: select, proxies: [美国自动策略, 日本自动策略, 新国自动策略, 香港自动策略, 台湾自动策略, 韩国自动策略, 英国自动策略, 法国自动策略, 德国自动策略]}
+  - {name: SpeedtestIntl, type: select, proxies: [DIRECT, 兜底后备策略]}
+  - {name: App Store, type: select, proxies: [DIRECT, 美国自动策略]}
+  - {name: Apple账户, type: select, proxies: [DIRECT, 美国自动策略]}
+  - {name: TestFlight, type: select, proxies: [DIRECT, 美国自动策略]}
+  - {name: Netflix, type: select, proxies: [香港自动策略, 美国自动策略, 台湾自动策略, 日本自动策略, 韩国自动策略, 新国自动策略, 英国自动策略, 法国自动策略, 德国自动策略]}
+  - {name: 游戏选择, type: select, include-all-providers: true, filter: *FilterGame, proxies: [DIRECT]}
+  - {name: 全球选择, type: select, include-all-providers: true, filter: *FilterAll}
+  - {name: 境外下载, type: select, proxies: [DIRECT, 兜底后备策略]}
+
+  - {name: 香港自动策略, <<: *UrlTest, filter: *FilterHK}
+  - {name: 台湾自动策略, <<: *UrlTest, filter: *FilterTW}
+  - {name: 日本自动策略, <<: *UrlTest, filter: *FilterJP}
+  - {name: 韩国自动策略, <<: *UrlTest, filter: *FilterKR}
+  - {name: 新国自动策略, <<: *UrlTest, filter: *FilterSG}
+  - {name: 美国自动策略, <<: *UrlTest, filter: *FilterUS}
+  - {name: 英国自动策略, <<: *UrlTest, filter: *FilterUK}
+  - {name: 法国自动策略, <<: *UrlTest, filter: *FilterFR}
+  - {name: 德国自动策略, <<: *UrlTest, filter: *FilterDE}
+
+# =========================
+# 端口监听配置
+# =========================
+# listeners:
+#   - name: mixed0
+#     type: mixed
+#     port: 42000
+#     proxy: 日本谷歌云
+#   - name: mixed1
+#     type: mixed
+#     port: 42001
+#     proxy: 美国家宽
+  
+# =========================
+# 基础配置
+# =========================
+port: 7890                         # 本机 HTTP 代理端口
+socks-port: 7891                   # 本机 SOCKS5 代理端口
+allow-lan: true                    # 允许局域网设备连接（如不共享，建议改为 false）
+mode: rule                         # 按规则分流（global 会全局走同一路由）
+log-level: info                    # 生产默认 info；排障需要改 debug
+unified-delay: true                # 以“完成握手后”的 RTT 统计延迟，更贴近真实体验
+tcp-concurrent: true               # 并发拨号择优保留，跨境网络通常更稳更快
+find-process-mode: strict          # 更精准地识别连接来源进程（Windows 需管理员权限）
+global-client-fingerprint: chrome  # 统一 TLS 指纹为 Chrome；如遇个别站点校验可改 randomized
+
+
+
+# 嗅探
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  force-domain:
+    - "+.v2ex.com"
+  skip-domain:
+    - "+.baidu.com"
+
+
+# 入站  
+tun:
+  enable: true
+  # system/gvisor/mixed
+  stack: mixed
+  dns-hijack: ["any:53", "tcp://any:53"]
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+
+
+# =========================
+# DNS配置
+# =========================
+dns:
+    enable: true
+    listen: '127.0.0.1:5335'        
+    use-system-hosts: false        # 若你改过系统 hosts，可改为 true
+    enhanced-mode: fake-ip         # 使用虚拟 IP 提升兼容性与分流精度
+    fake-ip-range: 198.18.0.1/16   # 推荐从网段基地址 .0 开始（IETF 预留测试网段）
+                                   
+    # bootstrap：解析 DoH/DoT 域名的起始解析器（纯 IP、直连可达）
+    default-nameserver: [180.76.76.76, 182.254.118.118, 8.8.8.8, 180.184.2.2]    
+
+    # 直连的主上游解析器（国内环境常作为“本地优先”）
+    nameserver: [180.76.76.76, 119.29.29.29, 180.184.1.1, 223.5.5.5, 8.8.8.8, 'https://223.6.6.6/dns-query#h3=true', 'https://dns.alidns.com/dns-query', 'https://cloudflare-dns.com/dns-query', 'https://doh.pub/dns-query']    
+    
+    # 海外优先兜底解析
+    fallback: ['https://000000.dns.nextdns.io/dns-query#h3=true', 'https://dns.alidns.com/dns-query', 'https://doh.pub/dns-query', 'https://public.dns.iij.jp/dns-query', 'https://101.101.101.101/dns-query', 'https://208.67.220.220/dns-query', 'tls://8.8.4.4', 'tls://1.0.0.1:853', 'https://cloudflare-dns.com/dns-query', 'https://dns.google/dns-query']
+    
+    # 触发 fallback 的判据
+    fallback-filter: { geoip: true, ipcidr: [240.0.0.0/4, 0.0.0.0/32, 127.0.0.1/32], domain: [+.google.com, +.facebook.com, +.twitter.com, +.youtube.com, +.xn--ngstr-lra8j.com, +.google.cn, +.googleapis.cn, +.googleapis.com, +.gvt1.com] }
+    
+    # 对这些域名/场景不使用 fake-ip，避免连通性/认证异常
+    fake-ip-filter: ['*.lan', 'stun.*.*.*', 'stun.*.*', time.windows.com, time.nist.gov, time.apple.com, time.asia.apple.com, '*.ntp.org.cn', '*.openwrt.pool.ntp.org', time1.cloud.tencent.com, time.ustc.edu.cn, pool.ntp.org, ntp.ubuntu.com, ntp.aliyun.com, ntp1.aliyun.com, ntp2.aliyun.com, ntp3.aliyun.com, ntp4.aliyun.com, ntp5.aliyun.com, ntp6.aliyun.com, ntp7.aliyun.com, time1.aliyun.com, time2.aliyun.com, time3.aliyun.com, time4.aliyun.com, time5.aliyun.com, time6.aliyun.com, time7.aliyun.com, '*.time.edu.cn', time1.apple.com, time2.apple.com, time3.apple.com, time4.apple.com, time5.apple.com, time6.apple.com, time7.apple.com, time1.google.com, time2.google.com, time3.google.com, time4.google.com, music.163.com, '*.music.163.com', '*.126.net', musicapi.taihe.com, music.taihe.com, songsearch.kugou.com, trackercdn.kugou.com, '*.kuwo.cn', api-jooxtt.sanook.com, api.joox.com, joox.com, y.qq.com, '*.y.qq.com', streamoc.music.tc.qq.com, mobileoc.music.tc.qq.com, isure.stream.qqmusic.qq.com, dl.stream.qqmusic.qq.com, aqqmusic.tc.qq.com, amobile.music.tc.qq.com, '*.xiami.com', '*.music.migu.cn', music.migu.cn, '*.msftconnecttest.com', '*.msftncsi.com', localhost.ptlogin2.qq.com, '*.*.*.srv.nintendo.net', '*.*.stun.playstation.net', 'xbox.*.*.microsoft.com', '*.ipv6.microsoft.com', '*.*.xboxlive.com', speedtest.cros.wr.pvp.net]
+
+# =========================
+# 配置文件管理
+# =========================
+profile:
+  store-selected: true             # 记住上次选择的策略/节点
+  store-fake-ip: false             # 存储 fake-ip 映射会导致DNS泄露
+                                   
+# =========================
+# 域名/流量嗅探
+# =========================
+sniffer:
+  enable: true
+  parse-pure-ip: true              # 对直连 IP 连接尝试解析出 SNI/Host
+  sniff:
+    TLS:
+      ports: [443, 8443]           # 要嗅探的 TLS 流量端口，包括标准 HTTPS 端口 443 和备用的 8443
+    HTTP:
+      ports: [80, 8080-8880]       # 要嗅探的 HTTP 流量端口，包括标准 HTTP 端口 80 和常用的 8080-8880
+      override-destination: true   # 用嗅探到的域名覆盖原始目标 IP/域名
+
+# =========================
+# Geo 数据获取
+# =========================
+geodata-mode: true
+geo-auto-update: true
+geodata-loader: standard
+geo-update-interval: 24
+geox-url:
+  geoip: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
+  geosite: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
+  mmdb: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb
+  asn: https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb
+
+# =========================
+# 规则集获取
+# =========================
+# 订阅规则
+rule-providers:
+  LAN:
+    <<: *RuleProviders
+    path: './rules/Lan.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/LAN_SPLITTER.yaml'
+
+  Direct:
+    <<: *RuleProviders
+    path: './rules/Direct.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/Direct.yaml'
+
+  Proxy:
+    <<: *RuleProviders
+    path: './rules/Proxy.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/Proxy.yaml'
+
+  ChinaDownloadCDN:
+    <<: *RuleProviders
+    path: './rules/ChinaDownloadCDN.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/ChinaDownloadCDN.yaml'
+
+  InternationalDownloadCDN:
+    <<: *RuleProviders
+    path: './rules/InternationalDownloadCDN.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/InternationalDownloadCDN.yaml'
+
+  AI:
+    <<: *RuleProviders
+    path: './rules/AI.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/AI.yaml'
+
+  TikTok:
+    <<: *RuleProviders
+    path: './rules/TikTok.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/TikTok.yaml'
+
+  SpeedtestIntl:
+    <<: *RuleProviders
+    path: './rules/SpeedtestInternational.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/SpeedtestInternational.yaml'
+
+  Game:
+    <<: *RuleProviders
+    path: './rules/Game.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/Game.yaml'
+
+  Steam:
+    <<: *RuleProviders
+    path: './rules/Steam.yaml'
+    url: 'https://rule.kelee.one/Clash/Steam.yaml'
+
+  Netflix:
+    <<: *RuleProviders
+    path: './rules/Netflix.yaml'
+    url: 'https://rule.kelee.one/Clash/Netflix.yaml'
+
+  iCloudChina:
+    <<: *RuleProviders
+    path: './rules/iCloudChina.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/iCloudChina.yaml'
+
+  ApplePushNotificationService:
+    <<: *RuleProviders
+    path: './rules/ApplePushNotificationService.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/ApplePushNotificationService.yaml'
+
+  AppleSoftwareUpdates:
+    <<: *RuleProviders
+    path: './rules/AppleSoftwareUpdates.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/AppleSoftwareUpdates.yaml'
+
+  AppleID:
+    <<: *RuleProviders
+    path: './rules/AppleID.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/AppleAccount.yaml'
+
+  AppStore:
+    <<: *RuleProviders
+    path: './rules/AppStore.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/AppStore.yaml'
+
+  TestFlight:
+    <<: *RuleProviders
+    path: './rules/TestFlight.yaml'
+    url: 'https://rule.kelee.one/Clash/TestFlight.yaml'
+
+  Microsoft:
+    <<: *RuleProviders
+    path: './rules/Microsoft.yaml'
+    url: 'https://rule.kelee.one/Clash/Microsoft.yaml'
+
+  Google:
+    <<: *RuleProviders
+    path: './rules/Google.yaml'
+    url: 'https://rule.kelee.one/Clash/Google.yaml'
+
+  Telegram:
+    <<: *RuleProviders
+    path: './rules/Telegram.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/Telegram.yaml'
+
+  ESET_China:
+    <<: *RuleProviders
+    path: './rules/ESET_China.yaml'
+    url: 'https://kelee.one/Tool/Clash/Rule/ESET_China.yaml'
+
+# 规则指向
+rules:
+  - RULE-SET, LAN, DIRECT
+  - RULE-SET, Direct, DIRECT
+  - RULE-SET, Proxy, 兜底后备策略
+  - RULE-SET, ChinaDownloadCDN, DIRECT
+  - RULE-SET, InternationalDownloadCDN, 境外下载
+  - RULE-SET, AI, AI
+  - RULE-SET, TikTok, TikTok
+  - RULE-SET, SpeedtestIntl, SpeedtestIntl
+  - RULE-SET, Steam, 兜底后备策略
+  - RULE-SET, Game, 游戏选择
+  - RULE-SET, Netflix, Netflix
+  - RULE-SET, TestFlight, TestFlight
+  - RULE-SET, iCloudChina, DIRECT
+  - RULE-SET, ApplePushNotificationService, DIRECT
+  - RULE-SET, AppleSoftwareUpdates, DIRECT
+  - RULE-SET, AppleID, Apple账户
+  - RULE-SET, AppStore, App Store
+  - RULE-SET, Microsoft, 兜底后备策略
+  - RULE-SET, Google, 兜底后备策略
+  - RULE-SET, Telegram, 兜底后备策略
+  - RULE-SET, ESET_China, DIRECT
+  - GEOIP, CN, DIRECT
+  - MATCH, 兜底后备策略
