@@ -1,23 +1,23 @@
 # 锚点 - 节点订阅的参数 [每小时更新一次订阅节点，每 6 秒一次健康检查]
-NodeParam: &NodeParam {type: http, interval: 3600, health-check: {enable: true, url: 'http://www.google.com/blank.html', interval: 6}}
+# NodeParam: &NodeParam {type: http, interval: 3600, health-check: {enable: true, url: 'http://www.google.com/blank.html', interval: 6}}
 
-proxy-providers:
-  组合订阅:
-    # 类型
-    # type: http
-    # 订阅链接
-    # 自动更新时间设置
-    # interval: 3600
-    # 健康检查
-    # health-check:
-    #   enable: true
-    #   interval: 600
-    #   # lazy: true
-    #   url: http://www.gstatic.com/generate_204
-    # 使用锚点，代表以上所有参数
-    <<: *NodeParam
-    url: "https://sub-store.942645.xyz/sub-store-path/download/collection/sub-store%E7%BB%84%E5%90%88%E8%AE%A2%E9%98%85"
-    path: ./组合订阅.yaml
+# proxy-providers:
+#   组合订阅:
+#     # 类型
+#     # type: http
+#     # 订阅链接
+#     # 自动更新时间设置
+#     # interval: 3600
+#     # 健康检查
+#     # health-check:
+#     #   enable: true
+#     #   interval: 600
+#     #   # lazy: true
+#     #   url: http://www.gstatic.com/generate_204
+#     # 使用锚点，代表以上所有参数
+#     <<: *NodeParam
+#     url: "https://sub-store.942645.xyz/sub-store-path/download/collection/sub-store%E7%BB%84%E5%90%88%E8%AE%A2%E9%98%85"
+#     path: ./组合订阅.yaml
 
 
 
