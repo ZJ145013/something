@@ -16,7 +16,7 @@
 #     #   url: http://www.gstatic.com/generate_204
 #     # 使用锚点，代表以上所有参数
 #     <<: *NodeParam
-#     url: "https://sub-store.942645.xyz/sub-store-path/download/collection/sub-store%E7%BB%84%E5%90%88%E8%AE%A2%E9%98%85"
+#     url: "url"
 #     path: ./组合订阅.yaml
 
 
