@@ -10,7 +10,7 @@
         {
             "type": "Script Operator",
             "args": {
-                "content": "https://raw.githubusercontent.com/ZJ145013/something/refs/heads/main/mihomo/rules.yaml?token=GHSAT0AAAAAADPYU4AJA42YRUHGCCDM27562JEPDDA#noCache",
+                "content": "https://raw.githubusercontent.com/ZJ145013/something/refs/heads/main/mihomo/rules.yaml#noCache",
                 "mode": "link",
                 "arguments": {}
             },
