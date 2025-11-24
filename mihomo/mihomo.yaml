@@ -11,35 +11,6 @@
 #  skip-cert-verify: false              ===中间的一大坨直接用你的节点粘贴覆盖即可===
 # - dialer-proxy: <线路节点的名字>       可选，想把这个节点用于链式代理时加上这一行。
 # =========================
-# proxies:
-#   # 这是我们手动添加的链式代理节点
-#   # 格式: 你的电脑 -> 最佳跳板 -> US-Node-01
-#   - type: hysteria2
-#     name: US-hysteria2
-#     server: 142.171.44.177
-#     port: 54321
-#     password: 6c6b0349-2943-4281-b7b8-f3141ca472f2
-#     skip-cert-verify: true
-#     tfo: false
-#     dialer-proxy: '🚀 最佳跳板' # 指定使用哪个策略组或节点作为前置代理
-
-#   - type: vless
-#     name: US-vless-reality
-#     server: 142.171.44.177
-#     port: 22158
-#     uuid: 825f768b-f662-4ac0-af71-313f1c6f92b2
-#     tls: true
-#     flow: xtls-rprx-vision
-#     client-fingerprint: chrome
-#     skip-cert-verify: true
-#     reality-opts:
-#       public-key: 7b5KVKCAj_BtKCWwUsvyn717Y5X0pCoR5_M6oJz9_Sw
-#     network: tcp
-#     encryption: none
-#     servername: www.paypal.com
-#     dialer-proxy: '🚀 最佳跳板' # 指定使用哪个策略组或节点作为前置代理
-
-
 
 # 锚点 - 节点订阅的参数 [每小时更新一次订阅节点，每 6 秒一次健康检查]
 NodeParam: &NodeParam {type: http, interval: 3600, health-check: {enable: true, url: 'http://www.google.com/blank.html', interval: 6}}
@@ -59,7 +30,7 @@ proxy-providers:
     #   url: http://www.gstatic.com/generate_204
     # 使用锚点，代表以上所有参数
     <<: *NodeParam
-    url: "https://sub-store.942645.xyz/sub-store-path/download/collection/sub-store%E7%BB%84%E5%90%88%E8%AE%A2%E9%98%85"
+    url: "url"
     path: ./组合订阅.yaml
 
 
