@@ -30,7 +30,7 @@ proxy-providers:
     #   url: http://www.gstatic.com/generate_204
     # 使用锚点，代表以上所有参数
     <<: *NodeParam
-    url: "https://sub-store.942645.xyz/sub-store-path/download/collection/sub-store%E7%BB%84%E5%90%88%E8%AE%A2%E9%98%85"
+    url: "url"
     path: ./组合订阅.yaml
 
 
@@ -599,9 +599,6 @@ rule-providers:
 # 分流规则
 # =========================
 rules: # 注意，分流规则是按自上而下、首次命中即停的原则进行匹配，因此重要的规则应该放前面
- - DOMAIN-SUFFIX,942645.xyz,🔒 国内服务
- - IP-CIDR,142.171.44.177/32,🔒 国内服务
- - IP-CIDR,151.243.229.22/32,🔒 国内服务
  - DOMAIN-SUFFIX,elysia.h-e.top,🔒 国内服务
  - DOMAIN-SUFFIX,69yun69.com,🇭🇰 香港自动策略
  - RULE-SET,category-ads-all,🛑 广告拦截
