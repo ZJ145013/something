@@ -596,7 +596,7 @@ rule-providers:
 # 分流规则
 # =========================
 rules: # 注意，分流规则是按自上而下、首次命中即停的原则进行匹配，因此重要的规则应该放前面
- - DOMAIN-SUFFIX,anyrouter.top,🔒 国内服务
+ - DOMAIN-SUFFIX,anyrouter.top,🇭🇰 香港自动策略
  - DOMAIN-SUFFIX,elysia.h-e.top,🔒 国内服务
  - DOMAIN-SUFFIX,linux.do,🇭🇰 香港自动策略
  - DOMAIN-SUFFIX,69yun69.com,🇭🇰 香港自动策略
