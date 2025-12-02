@@ -157,7 +157,7 @@ proxy-groups:
   - name: 🔍 谷歌服务
     type: select
     proxies:
-      - 🇭🇰 香港自动策略
+      - 🇺🇸 美国自动策略
       - 🇯🇵 日本自动策略
       - 🇸🇬 新国自动策略
       - 🚀 节点选择
