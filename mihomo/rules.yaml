@@ -74,7 +74,9 @@ proxy-groups:
       - 🔒 国内服务
 
   - name: 🖐 手动选择
-    <<: *UrlTest
+    type: select
+    url: 'http://www.google.com/blank.html'
+    include-all: true
     filter: *FilterAll
 
   - name: ⚡ 自动选择
