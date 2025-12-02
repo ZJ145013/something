@@ -75,6 +75,7 @@ proxy-groups:
 
   - name: 🚀 手动选择
     type: select
+    include-all: true
     filter: *FilterAll
 
   - name: ⚡ 自动选择
