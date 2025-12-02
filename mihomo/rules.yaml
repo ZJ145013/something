@@ -73,9 +73,8 @@ proxy-groups:
       - 🇩🇪 德国自动策略
       - 🔒 国内服务
 
-  - name: 🚀 手动选择
-    type: select
-    include-all: true
+  - name: 🖐 手动选择
+    <<: *UrlTest
     filter: *FilterAll
 
   - name: ⚡ 自动选择
