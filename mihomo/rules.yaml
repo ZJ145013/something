@@ -75,8 +75,7 @@ proxy-groups:
 
   - name: 🚀 手动选择
     type: select
-    proxies:
-      - filter: *FilterAll
+    filter: *FilterAll
 
   - name: ⚡ 自动选择
     <<: *UrlTest
