@@ -606,7 +606,6 @@ rules: # 注意，分流规则是按自上而下、首次命中即停的原则�
  - DOMAIN-KEYWORD,shanghailife,🔒 国内服务
  - DOMAIN-KEYWORD,modelscope,🔒 国内服务
  - DOMAIN-SUFFIX,colin1112.me,🔒 国内服务
- - DOMAIN-SUFFIX,linux.do,🇭🇰 香港自动策略
  - DOMAIN-SUFFIX,69yun69.com,🇭🇰 香港自动策略
  - RULE-SET,category-ads-all,🛑 广告拦截
  - RULE-SET,category-ai-chat-!cn,💬 AI 服务
