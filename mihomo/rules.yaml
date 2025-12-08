@@ -605,7 +605,6 @@ rule-providers:
 rules: # 注意，分流规则是按自上而下、首次命中即停的原则进行匹配，因此重要的规则应该放前面
  - DOMAIN-KEYWORD,shanghailife,🔒 国内服务
  - DOMAIN-KEYWORD,modelscope,🔒 国内服务
- - DOMAIN-SUFFIX,anyrouter.top,🇭🇰 香港自动策略
  - DOMAIN-SUFFIX,colin1112.me,🔒 国内服务
  - DOMAIN-SUFFIX,linux.do,🇭🇰 香港自动策略
  - DOMAIN-SUFFIX,69yun69.com,🇭🇰 香港自动策略
